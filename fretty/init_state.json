@@ -1,0 +1,649 @@
+{
+    "view": "first_person",
+    "tuning": [
+        "E2",
+        "A2",
+        "D3",
+        "G3",
+        "B3",
+        "E4"
+    ],
+    "spots": [
+        [
+            {
+                "note_REMOVE": "E2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F#2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G#2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A#2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "B2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "E3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            }
+        ],
+        [
+            {
+                "note_REMOVE": "A2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A#2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "B2",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "E3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            }
+        ],
+        [
+            {
+                "note_REMOVE": "D3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "E3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "B3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            }
+        ],
+        [
+            {
+                "note_REMOVE": "G3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A#3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "B3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "E4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            }
+        ],
+        [
+            {
+                "note_REMOVE": "B3",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "E4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "B4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            }
+        ],
+        [
+            {
+                "note_REMOVE": "E4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "F#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "G#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "A#4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "B4",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C5",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "C#5",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D5",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "D#5",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            },
+            {
+                "note_REMOVE": "E5",
+                "status": "new",
+                "interval": null,
+                "history": [],
+                "ease_factor": 1.6,
+                "good_attempts": 0
+            }
+        ]
+    ]
+}

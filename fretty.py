@@ -2,7 +2,7 @@ import pyaudio
 import numpy as np
 import scipy.fftpack
 from scipy.io import wavfile
-from guitar_notes import guitar_notes
+from fretty.notes import guitar_notes
 
 
 def getNote(frequency):

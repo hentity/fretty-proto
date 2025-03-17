@@ -1,4 +1,6 @@
-guitar_notes = {
+note_to_frequency = {
+    "D2": 73.42,
+    "D#2": 77.78,
     "E2": 82.41,
     "F2": 87.31,
     "F#2": 92.50,
@@ -44,3 +46,27 @@ guitar_notes = {
     "A#5": 932.33,
     "B5": 987.77,
 }
+
+def note_to_spots(note, tuning):
+    spots = []
+    
+    notes = list(note_to_frequency.keys())
+    note_idx = notes.index(note)
+    for string, open_note, in enumerate(tuning):
+        open_note_idx = notes.index(open_note)
+        fret = note_idx - open_note_idx
+        if fret >= 0 and fret <= 12:
+            spots.append((string, fret))
+
+    return spots
+
+def spot_to_note(spot, tuning):
+    string, fret = spot
+    notes = list(note_to_frequency.keys())
+    open_note_idx = notes.index(tuning[string])
+    spot_note_idx = open_note_idx + fret
+    spot_note = notes[spot_note_idx]
+
+    return spot_note
+
+
