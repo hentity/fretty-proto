@@ -31,6 +31,10 @@ def init_colors():
     curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_YELLOW)   # "learning" → yellow background
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_GREEN)    # "review" → green background
     curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_BLUE)    # "review" → green background
+    curses.init_pair(5, curses.COLOR_BLUE, curses.COLOR_BLACK)
+    curses.init_pair(6, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    curses.init_pair(7, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+    curses.init_pair(8, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
 def draw_menu(stdscr, current_screen):
     curses.curs_set(0)  # Hide cursor

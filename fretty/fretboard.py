@@ -2,13 +2,13 @@ from enum import Enum
 import re
 import curses
 import json
+from datetime import date, timedelta
 
 from fretty.notes import note_to_frequency, spot_to_note
 from fretty.globals import *
 
 EASY_TIME = 1
-GOOD_TIME = 1.5
-HARD_TIME = 2.5
+GOOD_TIME = 4
 FAIL_TIME = 5
 
 NEW_GOOD_ATTEMPTS = 3
@@ -20,6 +20,8 @@ MIN_EASE_FACTOR = 1
 MAX_EASE_FACTOR = 3
 EASE_FACTOR_DROP = 0.2
 EASE_FACTOR_BUMP = 0.2
+
+MAX_DAILY_REVIEWS = 5
 
 UNICODE_COLOURS = {
     "black": "\033[40m",
@@ -55,8 +57,12 @@ class Fretboard:
                 self.tuning = ["E2", "A2", "D3", "G3", "B3", "E4"]
             else:
                 self.tuning = tuning
-
+            
+            self.spots = None
             self.init_spots()
+
+            self.review_date_to_spots = {}
+            self.spot_to_review_date = {}
         else:
             self.read_state(state_filepath)
 
@@ -68,16 +74,52 @@ class Fretboard:
             for f in range(NUM_FRETS + 1):
                 note = spot_to_note((s, f), self.tuning)
                 learnable = self.learn_sharps or ('#' not in note)
-                spot = FretboardSpot(s, f, note, learnable=learnable)
+                spot = FretboardSpot(self, s, f, note, learnable=learnable)
                 string.append(spot)
             self.spots.append(string)
 
     def set_spots(spots_state):
         pass
 
-    def get_spots(self):
-        return self.spots
+    def get_reviews_today(self):
+        today = date.today()
+        if today in self.review_date_to_spots:
+            return self.review_date_to_spots[today]
+        else:
+            return []
     
+    def add_review(self, spot, days):
+        review_date = date.today() + timedelta(days=days)
+        while True:
+            if days in self.review_date_to_spots:
+                if len(self.review_date_to_spots[review_date]) < MAX_DAILY_REVIEWS:
+                    self.review_date_to_spots[review_date].append(spot)
+                    self.spot_to_review_date[spot] = review_date
+                    break
+                else:
+                    review_date += timedelta(days=1)
+            else:
+                self.review_date_to_spots[review_date] = [spot]
+                self.spot_to_review_date[spot] = review_date
+                break
+    
+    def remove_review(self, spot):
+        review_date = None
+        if spot in self.spot_to_review_date:
+            review_date = self.spot_to_review_date[spot]
+            self.review_date_to_spots[review_date].remove(spot)
+            del self.spot_to_review_date[spot]
+
+    def get_spots(self, status=None):
+        if status is None:
+            return self.spots
+        else:
+            spots = []
+            for s in range(NUM_STRINGS):
+                state_spots = [spot for spot in self.spots[s] if spot.get_status() == status]
+                spots += state_spots
+            return spots
+            
     def read_state(self, state_filepath):
         try:
             with open(state_filepath, 'r') as file:
@@ -91,7 +133,7 @@ class Fretboard:
                     string = []
                     for f in range(NUM_FRETS + 1):
                         note = spot_to_note((s, f), self.tuning)
-                        spot = FretboardSpot(s, f, note, spot_state=file_spots[s][f])
+                        spot = FretboardSpot(self, s, f, note, spot_state=file_spots[s][f])
                         string.append(spot)
                     self.spots.append(string)
 
@@ -180,8 +222,9 @@ class Fretboard:
         stdscr.getch()
         
 class FretboardSpot:
-    def __init__(self, string, fret, note, learnable=True, spot_state=None):
+    def __init__(self, fretboard, string, fret, note, learnable=True, spot_state=None):
         if spot_state is None:
+            self.fretboard = fretboard
             self.string = string
             self.fret = fret
             self.note = note
@@ -190,15 +233,22 @@ class FretboardSpot:
                 self.status = "new"
             else:
                 self.status = "unlearnable"
-            self.interval = None
+            self.interval = 1
             self.history = []
             self.ease_factor = BASE_EASE_FACTOR
             self.good_attempts = 0
+            self.review_days = []
         else:
             self.set_state(spot_state)
     
     def __str__(self):
         return str(self.get_state())
+    
+    def __hash__(self):
+        return (self.string, self.fret)
+    
+    def __eq__(self, other):
+        return (self.string, self.fret) == (other.string, other.fret)
 
     def set_state(self, spot_state):
         self.status = spot_state['status']
@@ -222,7 +272,17 @@ class FretboardSpot:
     
     def get_note(self):
         return self.note
+    
+    def get_pos(self):
+        return self.string, self.fret
 
+    def reset(self):
+        self.interval = 1
+        self.ease_factor = BASE_EASE_FACTOR
+        self.good_attempts = 0
+        self.review_days = []
+        self.status = "new"
+    
     def add_attempt(self, time):
         """
         Records an attempt for this spot and updates
@@ -237,7 +297,7 @@ class FretboardSpot:
             rating = "easy"
         elif time <= GOOD_TIME:
             rating = "good"
-        elif time <= HARD_TIME:
+        elif time < FAIL_TIME:
             rating = "hard"
         else:
             rating = "fail"
@@ -268,22 +328,27 @@ class FretboardSpot:
 
             if self.good_attempts >= LEARNING_GOOD_ATTEMPTS:
                 self.status = "review"
+                self.fretboard.add_review(self, self.interval)
                 self.good_attempts = 0
 
         elif self.status == "review":
+            self.fretboard.remove_review(self)
             if rating == "fail":
-                self.status = "review"
+                self.status = "learning"
                 self.good_attempts = LEARNING_GOOD_ATTEMPTS - 1
                 self.ease_factor = min(self.ease_factor, BASE_EASE_FACTOR)
                 self.interval = max(1, self.interval / self.ease_factor)
             elif rating == "hard":
                 self.ease_factor = max(MIN_EASE_FACTOR, self.ease_factor - EASE_FACTOR_DROP)
                 self.interval = self.interval * self.ease_factor
+                self.fretboard.add_review(self, self.interval)
             elif rating == "good":
                 self.interval = self.interval * self.ease_factor
+                self.fretboard.add_review(self, self.interval)
             elif rating == "easy":
                 self.ease_factor = min(MAX_EASE_FACTOR, self.ease_factor + EASE_FACTOR_BUMP)
                 self.interval = self.interval * self.ease_factor
+                self.fretboard.add_review(self, self.interval)
 
         self.history.append((time, rating, self.status))
 
