@@ -2,26 +2,11 @@ from enum import Enum
 import re
 import curses
 import json
+import ast
 from datetime import date, timedelta
 
 from fretty.notes import note_to_frequency, spot_to_note
 from fretty.globals import *
-
-EASY_TIME = 1
-GOOD_TIME = 4
-FAIL_TIME = 5
-
-NEW_GOOD_ATTEMPTS = 3
-LEARNING_GOOD_ATTEMPTS = 3
-REVIEW_GOOD_ATTEMPTS = 2
-
-BASE_EASE_FACTOR = 1.6
-MIN_EASE_FACTOR = 1
-MAX_EASE_FACTOR = 3
-EASE_FACTOR_DROP = 0.2
-EASE_FACTOR_BUMP = 0.2
-
-MAX_DAILY_REVIEWS = 5
 
 UNICODE_COLOURS = {
     "black": "\033[40m",
@@ -63,35 +48,69 @@ class Fretboard:
 
             self.review_date_to_spots = {}
             self.spot_to_review_date = {}
+
+            self.last_review_date = None
+
+            self.new = True
         else:
             self.read_state(state_filepath)
+        
+        self.curr_date = date.today()
 
 
     def init_spots(self):
         self.spots = []
         for s in range(NUM_STRINGS):
             string = []
-            for f in range(NUM_FRETS + 1):
+            for f in range(1, NUM_FRETS + 1):
                 note = spot_to_note((s, f), self.tuning)
                 learnable = self.learn_sharps or ('#' not in note)
                 spot = FretboardSpot(self, s, f, note, learnable=learnable)
                 string.append(spot)
             self.spots.append(string)
 
-    def set_spots(spots_state):
+    def get_spot(self, pos):
+        s, f = pos
+        return self.spots[s][f-1]
+    
+    def set_spots(self, spots_state):
         pass
 
+    def get_curr_date(self):
+        return self.curr_date
+    
+    def get_last_review_date(self):
+        return self.last_review_date
+    
     def get_reviews_today(self):
-        today = date.today()
-        if today in self.review_date_to_spots:
-            return self.review_date_to_spots[today]
+        if self.curr_date in self.review_date_to_spots:
+            return self.review_date_to_spots[self.curr_date]
         else:
             return []
+        
+    def push_back_reviews(self):
+        if not self.review_date_to_spots:
+            return
+        
+        earliest_review = min(
+            date for date, spots in self.review_date_to_spots.items() if spots
+        )
+        shift = (self.curr_date - earliest_review).days
+        
+        if shift > 0:
+            new_review_date_to_spots = {}
+            for old_date, spots in self.review_date_to_spots.items():
+                new_date = old_date + timedelta(days=shift)
+                new_review_date_to_spots[new_date] = spots
+                for spot in spots:
+                    self.spot_to_review_date[spot] = new_date
+            self.review_date_to_spots = new_review_date_to_spots
+            
     
     def add_review(self, spot, days):
-        review_date = date.today() + timedelta(days=days)
+        review_date = self.curr_date + timedelta(days=days)
         while True:
-            if days in self.review_date_to_spots:
+            if review_date in self.review_date_to_spots:
                 if len(self.review_date_to_spots[review_date]) < MAX_DAILY_REVIEWS:
                     self.review_date_to_spots[review_date].append(spot)
                     self.spot_to_review_date[spot] = review_date
@@ -109,6 +128,8 @@ class Fretboard:
             review_date = self.spot_to_review_date[spot]
             self.review_date_to_spots[review_date].remove(spot)
             del self.spot_to_review_date[spot]
+            if len(self.review_date_to_spots[review_date]) == 0:
+                del self.review_date_to_spots[review_date]
 
     def get_spots(self, status=None):
         if status is None:
@@ -124,27 +145,56 @@ class Fretboard:
         try:
             with open(state_filepath, 'r') as file:
                 state = json.load(file)
+                self.new = state.get("new", False)
                 self.view = state.get("view", "first_person")
                 self.tuning = state.get("tuning", ["E2", "A2", "D3", "G3", "B3", "E4"])
+                last_review_date_str = state.get("last_review_date", None)
+                if last_review_date_str is not None:
+                    self.last_review_date = date.fromisoformat(state["last_review_date"])
+                else:
+                    self.last_review_date = None
+
                 file_spots = state.get("spots", None)
                 
                 self.spots = []
                 for s in range(NUM_STRINGS):
                     string = []
-                    for f in range(NUM_FRETS + 1):
+                    for f in range(1, NUM_FRETS + 1):
                         note = spot_to_note((s, f), self.tuning)
-                        spot = FretboardSpot(self, s, f, note, spot_state=file_spots[s][f])
+                        spot = FretboardSpot(self, s, f, note, spot_state=file_spots[s][f-1])
+                        spot.good_attempts = 0
                         string.append(spot)
                     self.spots.append(string)
+
+                self.review_date_to_spots = {
+                    date.fromisoformat(k): [self.get_spot(ast.literal_eval(pos)) for pos in v] for k, v in state.get("review_date_to_spots", {}).items()
+                }
+                self.spot_to_review_date = {
+                    self.get_spot(ast.literal_eval(k)): date.fromisoformat(v) for k, v in state.get("spot_to_review_date", {}).items()
+                }
+
+
 
         except (FileNotFoundError, json.JSONDecodeError) as e:
             print(f"Error reading state file: {e}")
             self.init_spots()  # fallback to default initialization
 
     def write_state(self, state_filepath):
+        review_date_to_spots_serialized = {
+            d.isoformat(): [str(spot.get_pos()) for spot in v] for d, v in self.review_date_to_spots.items()
+        }
+
+        spot_to_review_date_serialized = {
+            str(k.get_pos()): v.isoformat() for k, v in self.spot_to_review_date.items()
+        }
+        
         state = {
+            "new": self.new,
             "view": self.view,
             "tuning": self.tuning,
+            "last_review_date": self.curr_date.isoformat(),
+            "review_date_to_spots": review_date_to_spots_serialized,
+            "spot_to_review_date": spot_to_review_date_serialized,
             "spots": [[spot.get_state() for spot in string] for string in self.spots]
         }
         try:
@@ -153,9 +203,23 @@ class Fretboard:
         except IOError as e:
             print(f"Error writing state file: {e}")
 
+    def done_for_day(self):
+        if self.new:
+            return False
+
+        if len(self.get_reviews_today()) > 0 or self.last_review_date != self.curr_date:
+            return False
+        
+        for string in self.spots:
+            for spot in string:
+                if spot.status in {"new", "learning"}:
+                    return False
+
+        return True
+    
     def get_spot(self, pos):
         string, fret = pos
-        return self.spots[string][fret]
+        return self.spots[string][fret-1]
 
 
     def adjust_tuning(self, adjustments):
@@ -171,7 +235,7 @@ class Fretboard:
         stdscr.clear()
 
         STATUS_COLOR_MAPPING = {
-            "new": curses.color_pair(1),
+            "new": curses.color_pair(9),
             "learning": curses.color_pair(2),
             "review": curses.color_pair(3),
             "unlearnable": curses.A_NORMAL,
@@ -184,9 +248,6 @@ class Fretboard:
         frets = range(1, NUM_FRETS + 1)
         if self.view == "third_person":
             frets.reverse()
-
-        # Print upper boundary
-        # stdscr.addstr(0, 3, "-" * 47)
 
         line_y = 1
         for s, string in strings:
@@ -216,28 +277,26 @@ class Fretboard:
             
             line_y += 1
 
-        # Print lower boundary
-        # stdscr.addstr(NUM_STRINGS + 1, 3, "-" * 47)
         stdscr.refresh()
         stdscr.getch()
         
 class FretboardSpot:
     def __init__(self, fretboard, string, fret, note, learnable=True, spot_state=None):
+        self.fretboard = fretboard
+        self.string = string
+        self.fret = fret
+        self.note = note
+        self.learnable = learnable
+        
         if spot_state is None:
-            self.fretboard = fretboard
-            self.string = string
-            self.fret = fret
-            self.note = note
-            self.learnable = learnable
             if self.learnable:
-                self.status = "new"
+                self.status = "unseen"
             else:
                 self.status = "unlearnable"
             self.interval = 1
             self.history = []
             self.ease_factor = BASE_EASE_FACTOR
             self.good_attempts = 0
-            self.review_days = []
         else:
             self.set_state(spot_state)
     
@@ -245,7 +304,7 @@ class FretboardSpot:
         return str(self.get_state())
     
     def __hash__(self):
-        return (self.string, self.fret)
+        return hash((self.string, self.fret))
     
     def __eq__(self, other):
         return (self.string, self.fret) == (other.string, other.fret)
@@ -280,8 +339,7 @@ class FretboardSpot:
         self.interval = 1
         self.ease_factor = BASE_EASE_FACTOR
         self.good_attempts = 0
-        self.review_days = []
-        self.status = "new"
+        self.status = "unseen"
     
     def add_attempt(self, time):
         """
@@ -289,7 +347,7 @@ class FretboardSpot:
         learning status / revision interval accordingly. 
         """
         if not self.learnable:
-            return
+            return None
 
         if time is None or time > FAIL_TIME:
             rating = "fail"

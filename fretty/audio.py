@@ -6,6 +6,7 @@ import os
 import sys
 import sounddevice as sd
 import pyaudio
+from datetime import datetime
 
 from fretty.notes import note_to_frequency, spot_to_note
 
@@ -15,10 +16,10 @@ highest_freq = 2000
 fluctuation_tolerance = 2.0
 
 device_info = sd.query_devices(kind='input')
+input_device_index = device_info['index']
 SAMPLE_RATE = int(device_info['default_samplerate'])
 CHANNELS = 1
-SEGMENT_DURATION = 0.25
-FORMAT = pyaudio.paFloat32
+FORMAT = pyaudio.paInt16
 CHUNK = 1024
 
 def estimate_fundamental(peaks, power_values):
@@ -65,6 +66,8 @@ def estimate_fundamental(peaks, power_values):
         power_sorted = np.delete(power_sorted, remove_idx)
 
     npeaks_filtered = len(peaks_sorted)
+    if npeaks_filtered == 0:
+        return None, None, removed_peaks, removed_power
     filter_reduction = npeaks_filtered / npeaks_unfiltered
     if filter_reduction < filter_threshold:
         return None, None, removed_peaks, removed_power
@@ -129,27 +132,82 @@ def log_message(message):
     with open(LOG_FILE, "a") as f:
         f.write(message + "\n")
 
+# def record_audio(duration):
+#     """Records audio from the microphone using pyaudio."""
+#     p = pyaudio.PyAudio()
+    
+#     stream = p.open(format=FORMAT, channels=CHANNELS, rate=SAMPLE_RATE,
+#                     input=True, input_device_index=input_device_index, frames_per_buffer=CHUNK)
+
+#     frames = []
+#     for _ in range(int(SAMPLE_RATE / CHUNK * duration)):
+#         data = stream.read(CHUNK, exception_on_overflow=False)
+#         frames.append(data)
+    
+#     stream.stop_stream()
+#     stream.close()
+#     p.terminate()
+
+#     # Convert raw audio bytes to NumPy array
+#     audio_data = np.frombuffer(b''.join(frames), dtype=np.int16)
+#     audio_data = audio_data.astype(np.float32) / 32768.0  # Normalize
+    
+#     return audio_data
+
+import pyaudio
+import numpy as np
+
 def record_audio(duration):
-    """Records audio from the microphone using pyaudio."""
+    """Records audio from the microphone using pyaudio with error handling."""
     p = pyaudio.PyAudio()
-    
-    stream = p.open(format=FORMAT, channels=CHANNELS, rate=SAMPLE_RATE,
-                    input=True, frames_per_buffer=CHUNK)
-
+    stream = None
     frames = []
-    for _ in range(int(SAMPLE_RATE / CHUNK * duration)):
-        data = stream.read(CHUNK, exception_on_overflow=False)
-        frames.append(data)
-    
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
 
-    # Convert raw audio bytes to NumPy array
-    audio_data = np.frombuffer(b''.join(frames), dtype=np.int16)
-    audio_data = audio_data.astype(np.float32) / 32768.0  # Normalize between -1 and 1
-    
-    return audio_data
+    try:
+        # Attempt to open stream
+        stream = p.open(format=FORMAT,
+                        channels=CHANNELS,
+                        rate=SAMPLE_RATE,
+                        input=True,
+                        input_device_index=input_device_index,
+                        frames_per_buffer=CHUNK)
+
+        # Read data in chunks
+        for _ in range(int(SAMPLE_RATE / CHUNK * duration)):
+            try:
+                data = stream.read(CHUNK, exception_on_overflow=False)
+                frames.append(data)
+            except Exception as e:
+                print(f"Error reading audio chunk: {e}")
+                break
+
+    except Exception as e:
+        print(f"Error opening audio stream: {e}")
+        return np.array([])  # Return empty array to indicate failure
+
+    finally:
+        # Clean up stream safely
+        if stream is not None:
+            try:
+                stream.stop_stream()
+                stream.close()
+            except Exception as e:
+                print(f"Error closing stream: {e}")
+        p.terminate()
+
+    if not frames:
+        print("No audio frames captured.")
+        return np.array([])
+
+    # Convert to NumPy array
+    try:
+        audio_data = np.frombuffer(b''.join(frames), dtype=np.int16)
+        audio_data = audio_data.astype(np.float32) / 32768.0  # Normalize
+        return audio_data
+    except Exception as e:
+        print(f"Error converting audio to NumPy array: {e}")
+        return np.array([])
+
 
 def listen(duration):
     """Listens to microphone for a given duration, reports any notes detected"""

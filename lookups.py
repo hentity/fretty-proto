@@ -55,7 +55,7 @@ def note_to_spots(note, tuning):
     for string, open_note, in enumerate(tuning):
         open_note_idx = notes.index(open_note)
         fret = note_idx - open_note_idx
-        if fret >= 0 and fret <= 12:
+        if fret >= 1 and fret <= 12:
             spots.append((string, fret))
 
     return spots
